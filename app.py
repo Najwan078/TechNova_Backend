@@ -6,28 +6,46 @@ import json, os
 import random
 import smtplib
 from email.message import EmailMessage
+import requests 
 
 app = Flask(__name__)
 CORS(app) 
 
-FILE_PATH = 'data.json'
+# ==========================================
+# KONFIGURASI JSONBIN.IO (DATABASE CLOUD)
+# ==========================================
+JSONBIN_BIN_ID = "6a19ba9dddf5aa59f7751c3e"
+JSONBIN_API_KEY = "$2a$10$gH6D9CpO4v4sPXZBA1mWOeRdiE6xBooFdeFBbvObvM7u8ZLAsfIx6"
+JSONBIN_URL = f"https://api.jsonbin.io/v3/b/{JSONBIN_BIN_ID}"
 
 def load_data():
     try:
-        if not os.path.exists(FILE_PATH):
-            return []
-        with open(FILE_PATH, 'r') as file:
-            return json.load(file)
+        headers = {
+            'X-Master-Key': JSONBIN_API_KEY
+        }
+        # Mengambil data langsung dari internet (JSONBin)
+        response = requests.get(JSONBIN_URL, headers=headers)
+        if response.status_code == 200:
+            return response.json().get('record', [])
+        return []
     except Exception as e:
-        print(f"Error membaca file: {e}")
+        print(f"Error membaca dari JSONBin: {e}")
         return []
 
 def save_data(data):
     try:
-        with open(FILE_PATH, 'w') as file:
-            json.dump(data, file, indent=4) 
+        headers = {
+            'Content-Type': 'application/json',
+            'X-Master-Key': JSONBIN_API_KEY
+        }
+        # Menyimpan data langsung ke internet (JSONBin)
+        requests.put(JSONBIN_URL, json=data, headers=headers)
     except Exception as e:
-        print(f"Error menyimpan file: {e}")
+        print(f"Error menyimpan ke JSONBin: {e}")
+
+# ==========================================
+# API ENDPOINTS
+# ==========================================
 
 # API Endpoint untuk Login
 @app.route('/api/login', methods=['POST'])
@@ -42,7 +60,7 @@ def login():
         
     return jsonify({"status": "error", "message": "Username atau password salah!"}), 401
 
-# 🚀 API Endpoint: Lupa Password (Kirim OTP via Email)
+# API Endpoint: Lupa Password (Kirim OTP via Email)
 @app.route('/api/forgot-password', methods=['POST'])
 def forgot_password():
     data = request.json
@@ -51,14 +69,10 @@ def forgot_password():
     if not email_tujuan:
         return jsonify({"status": "error", "message": "Email tidak boleh kosong"}), 400
 
-    # 1. Generate 6 Digit OTP Acak
     otp_code = str(random.randint(100000, 999999))
 
-    # 2. Siapkan Pesan Email
     msg = EmailMessage()
     msg['Subject'] = "Kode OTP Reset Password - TechNova University"
-    
-    # ✅ PERBAIKAN: Gunakan email asli kamu sebagai pengirim
     msg['From'] = "najwanpratomo07@gmail.com" 
     msg['To'] = email_tujuan
     
@@ -78,7 +92,6 @@ def forgot_password():
     """
     msg.set_content(pesan)
 
-    # 3. Kirim Email pakai smtplib
     try:
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
             smtp.login("najwanpratomo07@gmail.com", "vbpahgycgzhlnwzw")
@@ -94,22 +107,18 @@ def forgot_password():
         print("Error ngirim email:", e)
         return jsonify({"status": "error", "message": "Gagal mengirim email, cek koneksi atau App Password"}), 500
 
-# 🚀 API Endpoint BARU: Contact Us (Kirim Pesan + Lampiran File)
+# API Endpoint BARU: Contact Us (Kirim Pesan + Lampiran File)
 @app.route('/api/contact', methods=['POST'])
 def contact_us():
     try:
-        # Menangkap input form (menggunakan request.form karena dari FormData React)
         name = request.form.get('from_name')
         email_user = request.form.get('reply_to')
         message = request.form.get('message')
-        
-        # Menangkap lampiran file
         file = request.files.get('my_file')
 
         msg = EmailMessage()
         msg['Subject'] = f"Tiket Laporan TechNova dari: {name}"
         msg['From'] = "najwanpratomo07@gmail.com" 
-        # Pesan Contact Us dikirim ke email Admin (email kamu sendiri)
         msg['To'] = "najwanpratomo07@gmail.com"   
 
         pesan_lengkap = f"""
@@ -123,13 +132,11 @@ def contact_us():
         """
         msg.set_content(pesan_lengkap)
 
-        # Cek dan tambahkan lampiran file jika ada
         if file and file.filename:
             file_data = file.read()
             file_name = file.filename
             msg.add_attachment(file_data, maintype='application', subtype='octet-stream', filename=file_name)
 
-        # Kirim email menggunakan smtplib
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
             smtp.login("najwanpratomo07@gmail.com", "vbpahgycgzhlnwzw")
             smtp.send_message(msg)
@@ -150,7 +157,6 @@ def get_mahasiswa():
     jenis_search = request.args.get('search_type')
     sort_by = request.args.get('sort')
 
-    # Fitur Search
     if query:
         if jenis_search == 'nim':
             data, langkah = binary_search_nim(data, query)
@@ -160,7 +166,6 @@ def get_mahasiswa():
         else:
             data, langkah = linear_search_nama(data, query)
             
-    # Fitur Sort
     if sort_by == 'ipk':
         data, langkah = bubble_sort_ipk(data)
     elif sort_by == 'nim':
@@ -186,7 +191,6 @@ def tambah_mahasiswa():
         nim = data_baru.get('nim')
         nama = data_baru.get('nama')
         
-        # Validasi Regex berjalan di sini
         Student.validasi_input(nim, nama)
         
         mhs = Student(
@@ -196,7 +200,7 @@ def tambah_mahasiswa():
         
         data = load_data()
         data.append(mhs.to_dict())
-        save_data(data)
+        save_data(data) # Sekarang otomatis tersimpan ke JSONBin!
         
         return jsonify({"status": "success", "message": "Data berhasil ditambahkan!"})
     except ValueError as e:
@@ -250,7 +254,4 @@ def import_mahasiswa():
         return jsonify({"status": "error", "message": str(e)}), 400
 
 if __name__ == '__main__':
-    if not os.path.exists(FILE_PATH):
-        save_data([])
-    # Jalankan API di port 5000
     app.run(debug=True, port=5000)

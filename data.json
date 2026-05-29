@@ -86,5 +86,22 @@
         "semester": "6",
         "status": "Cuti",
         "ipk": 4.01
+    },
+    {
+        "nama": "Siti Nurhaliza",
+        "nim": "SI24101145",
+        "jurusan": "Sistem Informasi",
+        "semester": "5",
+        "status": "Aktif",
+        "ipk": 3.75
+    },
+    {
+        "nama": "Rizky Pratama",
+        "nim": "MJ24101120",
+        "jurusan": "Manajemen",
+        "semester": "4",
+        "status": "Aktif",
+        "ipk": 3.1
     }
+
 ]
