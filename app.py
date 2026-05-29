@@ -3,8 +3,6 @@ from flask_cors import CORS
 from models import Student
 from algorithms import bubble_sort_ipk, selection_sort_nim, linear_search_nama, binary_search_nim
 import json, os
-
-# 🚀 Tambahan import library bawaan Python untuk fitur email
 import random
 import smtplib
 from email.message import EmailMessage
@@ -37,8 +35,7 @@ def login():
     data = request.json
     username_input = data.get('username')
     password_input = data.get('password')
-    
-    # DAFTAR AKUN SAKTI (Sejajar dengan variabel di atas)
+
     if (username_input == 'admin' and password_input == 'admin123') or \
        (username_input == 'najwanpratomo07@gmail.com' and password_input == 'najwanp078'):
         return jsonify({"status": "success", "message": "Login berhasil"})
@@ -84,7 +81,6 @@ def forgot_password():
     # 3. Kirim Email pakai smtplib
     try:
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-            # ✅ PERBAIKAN: Spasi di App Password sudah dihilangkan agar tidak error
             smtp.login("najwanpratomo07@gmail.com", "vbpahgycgzhlnwzw")
             smtp.send_message(msg)
             
@@ -213,6 +209,45 @@ def hapus_mahasiswa(nim):
     data = [m for m in data if m['nim'] != nim]
     save_data(data)
     return jsonify({"status": "success", "message": "Data berhasil dihapus!"})
+
+# API Endpoint untuk Edit Data
+@app.route('/api/mahasiswa/<nim>', methods=['PUT'])
+def edit_mahasiswa(nim):
+    try:
+        data_baru = request.json
+        data = load_data()
+        for i, m in enumerate(data):
+            if m['nim'] == nim:
+                data[i].update({
+                    'nama': data_baru.get('nama', m['nama']),
+                    'jurusan': data_baru.get('jurusan', m['jurusan']),
+                    'semester': data_baru.get('semester', m['semester']),
+                    'status': data_baru.get('status', m['status']),
+                    'ipk': data_baru.get('ipk', m['ipk'])
+                })
+                save_data(data)
+                return jsonify({"status": "success", "message": "Data berhasil diupdate!"})
+        return jsonify({"status": "error", "message": "Mahasiswa tidak ditemukan"}), 404
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+# API Endpoint untuk Export JSON
+@app.route('/api/mahasiswa/export', methods=['GET'])
+def export_mahasiswa():
+    data = load_data()
+    return jsonify(data)
+
+# API Endpoint untuk Import JSON
+@app.route('/api/mahasiswa/import', methods=['POST'])
+def import_mahasiswa():
+    try:
+        data_import = request.json
+        if not isinstance(data_import, list):
+            return jsonify({"status": "error", "message": "Format harus berupa array JSON"}), 400
+        save_data(data_import)
+        return jsonify({"status": "success", "message": f"{len(data_import)} data berhasil diimport!"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
 
 if __name__ == '__main__':
     if not os.path.exists(FILE_PATH):
