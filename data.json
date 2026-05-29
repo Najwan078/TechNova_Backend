@@ -1,0 +1,90 @@
+[
+    {
+        "nama": "Muhammad Najwan Pratomo",
+        "nim": "IT24101101",
+        "jurusan": "Teknik Informatika",
+        "semester": "3",
+        "status": "Aktif",
+        "ipk": 3.65
+    },
+    {
+        "nama": "Ivan Indra Pratama Gwas Gwas",
+        "nim": "IT24101102",
+        "jurusan": "Teknik Informatika",
+        "semester": "3",
+        "status": "Aktif",
+        "ipk": 3.67
+    },
+    {
+        "nama": "Muhammad Kairi Fathurrahman",
+        "nim": "IT24101103",
+        "jurusan": "Teknik Informatika",
+        "semester": "3",
+        "status": "Aktif",
+        "ipk": 3.8
+    },
+    {
+        "nama": "Nur Hikmah",
+        "nim": "IT24101104",
+        "jurusan": "Teknik Informatika",
+        "semester": "3",
+        "status": "Aktif",
+        "ipk": 3.6
+    },
+    {
+        "nama": "Dodi Sulistiyo",
+        "nim": "MJ24101110",
+        "jurusan": "Manajemen",
+        "semester": "6",
+        "status": "Cuti",
+        "ipk": 3.0
+    },
+    {
+        "nama": "Dwi Ambarwati",
+        "nim": "AK24101150",
+        "jurusan": "Akuntansi",
+        "semester": "8",
+        "status": "Lulus",
+        "ipk": 3.2
+    },
+    {
+        "nama": "Syarif Sitompul",
+        "nim": "SI24101132",
+        "jurusan": "Sistem Informasi",
+        "semester": "7",
+        "status": "Lulus",
+        "ipk": 3.35
+    },
+    {
+        "nama": "Ahmad Rifaldi",
+        "nim": "IT24101127",
+        "jurusan": "Teknik Informatika",
+        "semester": "3",
+        "status": "Aktif",
+        "ipk": 3.55
+    },
+    {
+        "nama": "Vincent ",
+        "nim": "IT24101150",
+        "jurusan": "Teknik Informatika",
+        "semester": "3",
+        "status": "Aktif",
+        "ipk": 2.78
+    },
+    {
+        "nama": "Andi Suhendi",
+        "nim": "AK24101180",
+        "jurusan": "Akuntansi",
+        "semester": "7",
+        "status": "Aktif",
+        "ipk": 3.4
+    },
+    {
+        "nama": "Fathurrahman Widodo Rafly Ahmad",
+        "nim": "RS24101176",
+        "jurusan": "Rekasaya Sipil",
+        "semester": "6",
+        "status": "Cuti",
+        "ipk": 4.01
+    }
+]
