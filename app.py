@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from models import Student
 from algorithms import bubble_sort_ipk, selection_sort_nim, linear_search_nama, binary_search_nim
-import json, os
 import random
 import smtplib
 from email.message import EmailMessage
